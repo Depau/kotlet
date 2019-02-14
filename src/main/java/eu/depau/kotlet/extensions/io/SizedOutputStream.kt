@@ -1,6 +1,5 @@
 package eu.depau.kotlet.extensions.io
 
-import eu.depau.kotlet.extensions.io.AbstractSizedOutputStream
 import java.io.OutputStream
 
 /**
