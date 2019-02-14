@@ -1,0 +1,84 @@
+buildscript {
+    ext.kotlin_version = '1.3.21'
+    ext.dokka_version = '0.9.17'
+    
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokka_version}"
+    }
+}
+
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.21'
+}
+
+apply plugin: 'org.jetbrains.dokka'
+
+allprojects {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
+}
+
+group 'eu.depau'
+version '0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+dokka {
+    moduleName = 'kotlet'
+    outputFormat = 'javadoc'
+    outputDirectory = "$buildDir/javadoc"
+
+    // List of files with module and package documentation
+    // http://kotlinlang.org/docs/reference/kotlin-doc.html#module-and-package-documentation
+    includes = ['README.md']
+
+    // Use to include or exclude non public members.
+    includeNonPublic = false
+
+    // Do not output deprecated members. Applies globally, can be overridden by packageOptions
+    skipDeprecated = true
+
+    // Emit warnings about not documented members. Applies globally, also can be overridden by packageOptions
+    reportUndocumented = true
+
+    skipEmptyPackages = true // Do not create index pages for empty packages
+}
+
+task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
+    outputFormat = 'javadoc'
+    outputDirectory = "$buildDir/javadoc"
+}
+
+// build a jar with javadoc
+task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
+    classifier = 'javadoc'
+    from "$buildDir/javadoc"
+    archiveName = "javadoc.jar"
+}
+
+artifacts {
+    archives javadocJar
+}
